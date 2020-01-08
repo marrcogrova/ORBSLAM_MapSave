@@ -52,3 +52,11 @@ fabric.properties
 
 # Editor-based Rest Client
 .idea/httpRequests
+
+# Build directories 
+build/*
+Thirdparty/g2o/build/*
+Thirdparty/g2o/lib/*
+Thirdparty/DBoW2/build/*
+Thirdparty/DBoW2/lib/*
+

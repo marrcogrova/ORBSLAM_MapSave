@@ -28,7 +28,7 @@ using namespace std;
 
 int main()
 {
-    const string &strSettingPath = "Setting.yaml";
+    const string &strSettingPath = "/home/marrcogrova/programming/ORBSLAM_MapSave/Examples/Setting.yaml";
     cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
     if(!fSettings.isOpened())
     {
@@ -52,7 +52,7 @@ int main()
 
     // Main loop
     cv::Mat im;
-    cv::VideoCapture capture(0);
+    cv::VideoCapture capture("/home/marrcogrova/inspector_3enero.avi");
 while(1)
     {
         // Read image from file
@@ -65,7 +65,7 @@ while(1)
         // Pass the image to the SLAM system
         SLAM.TrackMonocular(im,0);
 
-        if(SLAM.isShutdown())
+        if(SLAM.isShutdown() )
             break;
     }
     // Stop all threads
