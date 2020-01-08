@@ -1,22 +1,19 @@
 %YAML:1.0
 
 #--------------------------------------------------------------------------------------------
-# The Settings of ORB-SLAM2 Monocular. Adjust them!
+# The Settings of ORB-SLAM2 Monocular
 #--------------------------------------------------------------------------------------------
 
 # the Orb Vocabulary File Path. Either .bin File or .txt File is Ok.
-  
 Orb_Vocabulary: /home/marrcogrova/programming/ORBSLAM_MapSave/Vocabulary/ORBvoc.txt
 
 # the Camera Setting File Path. 
-
 Cam_Setting: /home/marrcogrova/programming/ORBSLAM_MapSave/Examples/realsense_kitti.yaml
 
 # Whether Run the ORB-SLAM2 System Using the Exsiting Map File (0 for no , 1 for yes).
+is_ReuseMap: 1
 
-is_ReuseMap: 0
 # the Exsiting Map File Path (if the above item is 0, this is unnessesary)
-
 ReuseMap: /home/marrcogrova/programming/ORBSLAM_MapSave/Examples/Slam_latest_Map.bin
 
 

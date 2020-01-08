@@ -71,7 +71,7 @@ while(1)
     // Stop all threads
     SLAM.Shutdown();
     // Save camera trajectory
-    SLAM.SaveKeyFrameTrajectoryTUM("KeyFrameTrajectory.txt");
+    SLAM.SaveKeyFrameTrajectoryTUM("/home/marrcogrova/Documents/KeyFrameTrajectory.txt");
 
     return 0;
 }

@@ -135,7 +135,7 @@ Tracking::Tracking(System *pSys, ORBVocabulary* pVoc, FrameDrawer *pFrameDrawer,
     cout << "- Scale Factor: " << fScaleFactor << endl;
     cout << "- Initial Fast Threshold: " << fIniThFAST << endl;
     cout << "- Minimum Fast Threshold: " << fMinThFAST << endl;
-    cout << "- Reuse Map ?: " << is_preloaded << endl;
+    cout << "- Reuse Map : " << is_preloaded << endl;
     if(sensor==System::STEREO || sensor==System::RGBD)
     {
         mThDepth = mbf*(float)fSettings["ThDepth"]/fx;
@@ -534,7 +534,9 @@ void Tracking::Track()
     else
     {
         // This can happen if tracking is lost
-        mlRelativeFramePoses.push_back(mlRelativeFramePoses.back());
+        if (mlRelativeFramePoses.size() > 0)
+            mlRelativeFramePoses.push_back(mlRelativeFramePoses.back());
+
         mlpReferences.push_back(mlpReferences.back());
         mlFrameTimes.push_back(mlFrameTimes.back());
         mlbLost.push_back(mState==LOST);
@@ -642,7 +644,7 @@ void Tracking::MonocularInitialization()
         }
 
         // Find correspondences
-        int minCorrespondence = 40; // initial value 100
+        int minCorrespondence = 30; // initial value 100
 
         ORBmatcher matcher(0.9,true);
         int nmatches = matcher.SearchForInitialization(mInitialFrame,mCurrentFrame,mvbPrevMatched,mvIniMatches,minCorrespondence);

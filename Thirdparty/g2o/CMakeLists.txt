@@ -71,7 +71,7 @@ SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${g2o_C_FLAGS}")
 
 # Find Eigen3
 SET(EIGEN3_INCLUDE_DIR ${G2O_EIGEN3_INCLUDE})
-FIND_PACKAGE(Eigen3 3.1.0 REQUIRED)
+FIND_PACKAGE(Eigen3 REQUIRED)
 IF(EIGEN3_FOUND)
   SET(G2O_EIGEN3_INCLUDE ${EIGEN3_INCLUDE_DIR} CACHE PATH "Directory of Eigen3")
 ELSE(EIGEN3_FOUND)
@@ -80,7 +80,7 @@ ENDIF(EIGEN3_FOUND)
 
 # Generate config.h
 SET(G2O_CXX_COMPILER "${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER}")
-configure_file(config.h.in ${g2o_SOURCE_DIR}/config.h)
+configure_file(config.h ${g2o_SOURCE_DIR}/config.h)
 
 # Set up the top-level include directories
 INCLUDE_DIRECTORIES(
