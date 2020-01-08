@@ -642,13 +642,15 @@ void Tracking::MonocularInitialization()
         }
 
         // Find correspondences
+        int minCorrespondence = 40; // initial value 100
+
         ORBmatcher matcher(0.9,true);
-        int nmatches = matcher.SearchForInitialization(mInitialFrame,mCurrentFrame,mvbPrevMatched,mvIniMatches,100);
+        int nmatches = matcher.SearchForInitialization(mInitialFrame,mCurrentFrame,mvbPrevMatched,mvIniMatches,minCorrespondence);
 
         // Check if there are enough correspondences
-        if(nmatches<100)
+        if(nmatches < minCorrespondence)
         {
-    		cout << __FUNCTION__ << "ORB extraction : No enough correspondesnces(<100) " << nmatches << endl;
+    		cout << __FUNCTION__ << "ORB extraction : No enough correspondences(" << minCorrespondence <<") -> actual: "<< nmatches << endl;
             delete mpInitializer;
             mpInitializer = static_cast<Initializer*>(NULL);
             return;
