@@ -32,9 +32,21 @@ using namespace std;
 
 class MonocularROS{
 
-    MonocularROS();
+    public:
+        MonocularROS();
 
+        bool init(const std::string _configPath);
 
+        void shutdown();
 
+    private:
+        ORB_SLAM2::System *SLAM_;
 
+        ros::NodeHandle nh_;
+
+        ros::Subscriber imgSub_;
+
+        ros::Publisher imgPub_;
+        ros::Publisher posePub_;
+        ros::Publisher mapPub_;
 };

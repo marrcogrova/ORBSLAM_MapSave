@@ -29,61 +29,23 @@
 #include <sensor_msgs/image_encodings.h>
 #include <cv_bridge/cv_bridge.h>
 
+#include "MonocularROS.h"
+
 using namespace std;
 
 
 int main(int _argc , char **_argv)
 {
-    const string &strSettingPath = "/home/marrcogrova/programming/ORBSLAM_MapSave/app/monocular/Setting.yaml";
-    cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
-    if(!fSettings.isOpened())
-    {
-        cerr << "Failed to open setting file at: " << strSettingPath << endl;
-        exit(-1);
-    }
-    const string strORBvoc = fSettings["Orb_Vocabulary"];
-    const string strCamSet = fSettings["Cam_Setting"];
-    int ReuseMap = fSettings["is_ReuseMap"];
-    const string strMapPath = fSettings["ReuseMap"];
-
-    bool bReuseMap = false;
-    if (1 == ReuseMap)
-        bReuseMap = true;
-
-    // Create SLAM system. It initializes all system threads and gets ready to process frames.
-    ORB_SLAM2::System SLAM(strORBvoc,strCamSet,ORB_SLAM2::System::MONOCULAR,true, bReuseMap,strMapPath);
-
-    cout << endl << "-------" << endl;
-    cout << "Start processing sequence ..." << endl;
-
     ros::init(_argc, _argv, "slam");
-    ros::NodeHandle nh;
-    ros::Subscriber sub;
 
+    MonocularROS mono;
 
-    sub = nh.subscribe<sensor_msgs::Image>(_argv[1], 1, [&](const sensor_msgs::Image::ConstPtr& _msg){
-        cv_bridge::CvImageConstPtr cv_ptr;
-        try {
-            cv_ptr = cv_bridge::toCvShare(_msg);
-        }
-            catch (cv_bridge::Exception& e) {
-            ROS_ERROR("cv_bridge exception: %s", e.what());
-            return;
-        }
-        
-        // Pass the image to the SLAM system
-        SLAM.TrackMonocular(cv_ptr->image,0);
-
-        if(SLAM.isShutdown())
-            return;
-    });
+    if (!mono.init("/home/marrcogrova/programming/ORBSLAM_MapSave/app/monocular/Setting.yaml"))
+        return 0;
     
     ros::spin();
 
-    // Stop all threads
-    SLAM.Shutdown();
-    // Save camera trajectory
-    SLAM.SaveKeyFrameTrajectoryTUM("/home/marrcogrova/Documents/KeyFrameTrajectory.txt");
+    mono.shutdown();
 
     return 0;
 }

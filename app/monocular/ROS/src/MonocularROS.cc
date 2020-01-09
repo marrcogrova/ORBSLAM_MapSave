@@ -21,6 +21,57 @@
 #include "MonocularROS.h"
 
 MonocularROS::MonocularROS(){
+}
+
+bool MonocularROS::init(const std::string _configPath){
+
+    const string &strSettingPath = _configPath;
+    cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
+    if(!fSettings.isOpened())
+    {
+        cerr << "Failed to open setting file at: " << strSettingPath << endl;
+        exit(-1);
+    }
+    const string strORBvoc = fSettings["Orb_Vocabulary"];
+    const string strCamSet = fSettings["Cam_Setting"];
+    int ReuseMap = fSettings["is_ReuseMap"];
+    const string strMapPath = fSettings["ReuseMap"];
+
+    bool bReuseMap = false;
+    if (1 == ReuseMap)
+        bReuseMap = true;
+
+    // Create SLAM system. It initializes all system threads and gets ready to process frames.
+    SLAM_ = new ORB_SLAM2::System(strORBvoc,strCamSet,ORB_SLAM2::System::MONOCULAR,true, bReuseMap,strMapPath);
+
+    cout << endl << "-------" << endl;
+    cout << "Start processing sequence ..." << endl;
 
 
+    const string imageTopic = fSettings["image_topic"];
+    imgSub_ = nh_.subscribe<sensor_msgs::Image>(imageTopic, 1, [&](const sensor_msgs::Image::ConstPtr& _msg){
+        cv_bridge::CvImageConstPtr cv_ptr;
+        try {
+            cv_ptr = cv_bridge::toCvShare(_msg);
+        }
+            catch (cv_bridge::Exception& e) {
+            ROS_ERROR("cv_bridge exception: %s", e.what());
+            return;
+        }
+        
+        // Pass the image to the SLAM system
+        SLAM_->TrackMonocular(cv_ptr->image,0);
+
+        if(SLAM_->isShutdown())
+            return;
+    });
+
+    return true;
+}
+
+void MonocularROS::shutdown(){
+    // Stop all threads
+    SLAM_->Shutdown();
+    // Save camera trajectory
+    SLAM_->SaveKeyFrameTrajectoryTUM("/home/marrcogrova/Documents/KeyFrameTrajectory.txt");
 }

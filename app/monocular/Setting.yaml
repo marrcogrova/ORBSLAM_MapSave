@@ -16,4 +16,6 @@ is_ReuseMap: 1
 # the Exsiting Map File Path (if the above item is 0, this is unnessesary)
 ReuseMap: /home/marrcogrova/programming/ORBSLAM_MapSave/app/monocular/Slam_latest_Map.bin
 
+# ROS topics
+image_topic: /camera/color/image_raw
 
