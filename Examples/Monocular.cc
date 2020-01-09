@@ -26,7 +26,7 @@
 using namespace std;
 
 
-int main()
+int main(int _argc , char **_argv)
 {
     const string &strSettingPath = "/home/marrcogrova/programming/ORBSLAM_MapSave/Examples/Setting.yaml";
     cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
@@ -52,7 +52,7 @@ int main()
 
     // Main loop
     cv::Mat im;
-    cv::VideoCapture capture("/home/marrcogrova/inspector_3enero.avi");
+    cv::VideoCapture capture(_argv[1]);
 while(1)
     {
         // Read image from file

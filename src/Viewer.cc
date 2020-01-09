@@ -76,9 +76,10 @@ void Viewer::Run()
     pangolin::Var<bool> menuReset("menu.Reset",false,false);
     pangolin::Var<bool> menuShutDown("menu.Shut Down",false,false);
 
-    pangolin::Var<double> showPosX("menu.X", 0);
-    pangolin::Var<double> showPosY("menu.Y", 0);
-    pangolin::Var<double> showPosZ("menu.Z", 0);
+    pangolin::Var<bool> menuReturnHome("menu.Return Home",false,false);
+    // pangolin::Var<double> showPosX("menu.X", 0);
+    // pangolin::Var<double> showPosY("menu.Y", 0);
+    // pangolin::Var<double> showPosZ("menu.Z", 0);
 
 
     // Define Camera Render Object (for view / scene browsing)
@@ -140,9 +141,9 @@ void Viewer::Run()
         if(menuShowPoints)
             mpMapDrawer->DrawMapPoints();
 
-        showPosX=Twc.m[4];
-        showPosY=Twc.m[8];
-        showPosZ=Twc.m[12];
+        // showPosX=Twc.m[4];
+        // showPosY=Twc.m[8];
+        // showPosZ=Twc.m[12];
 
         pangolin::FinishFrame();
 
@@ -175,6 +176,11 @@ void Viewer::Run()
         {
             mpSystem->ShutdownRequest();
             menuShutDown = false;
+        }
+        if(menuReturnHome)
+        {
+            std::cout << "FUNCIONALITY NOT IMPLEMENTED \n";
+            menuReturnHome = false;
         }
 
         if(Stop())

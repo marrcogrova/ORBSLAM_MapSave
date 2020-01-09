@@ -11,7 +11,7 @@ Orb_Vocabulary: /home/marrcogrova/programming/ORBSLAM_MapSave/Vocabulary/ORBvoc.
 Cam_Setting: /home/marrcogrova/programming/ORBSLAM_MapSave/Examples/realsense_kitti.yaml
 
 # Whether Run the ORB-SLAM2 System Using the Exsiting Map File (0 for no , 1 for yes).
-is_ReuseMap: 1
+is_ReuseMap: 0
 
 # the Exsiting Map File Path (if the above item is 0, this is unnessesary)
 ReuseMap: /home/marrcogrova/programming/ORBSLAM_MapSave/Examples/Slam_latest_Map.bin
