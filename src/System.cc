@@ -319,7 +319,11 @@ void System::Reset()
 
 void System::SaveMapRequest()
 {
-    SaveMap("/home/marrcogrova/programming/ORBSLAM_MapSave/app/monocular/Slam_latest_Map.bin");
+    std::string mapPath = "/home/marrcogrova/programming/ORBSLAM_MapSave/app/monocular/Slam_latest_Map.bin";
+    if (boost::filesystem::exists(mapPath))
+        std::remove(mapPath.c_str());
+
+    SaveMap(mapPath);
 }
 
 void System::ShutdownRequest()
@@ -517,6 +521,18 @@ void System::SaveTrajectoryKITTI(const string &filename)
     }
     f.close();
     cout << endl << "trajectory saved!" << endl;
+}
+
+cv::Mat System::DrawCurrentFrame () {
+  return mpFrameDrawer->DrawFrame();
+}
+
+std::vector<MapPoint*> System::GetAllMapPoints() {
+  return mpMap->GetAllMapPoints();
+}
+
+cv::Mat System::GetCurrentPosition () {
+  return current_position_;
 }
 
 } //namespace ORB_SLAM

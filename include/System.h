@@ -31,6 +31,7 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/vector.hpp>
+#include <boost/filesystem.hpp>
 
 #include "Tracking.h"
 #include "FrameDrawer.h"
@@ -39,7 +40,7 @@
 #include "LocalMapping.h"
 #include "LoopClosing.h"
 #include "KeyFrameDatabase.h"
-#include "ORBVocabulary.h"
+#include "ORBVocabulary.h" 
 #include "Viewer.h"
 
 namespace ORB_SLAM2
@@ -126,9 +127,9 @@ public:
     // See format details at: http://www.cvlibs.net/datasets/kitti/eval_odometry.php
     void SaveTrajectoryKITTI(const string &filename);
 
-    // TODO: Save/Load functions
-    // SaveMap(const string &filename);
-    // LoadMap(const string &filename);
+    std::vector<MapPoint*> GetAllMapPoints();
+    cv::Mat GetCurrentPosition ();
+    cv::Mat DrawCurrentFrame ();
 
 private:
 
@@ -178,6 +179,9 @@ private:
     std::mutex mMutexMode;
     bool mbActivateLocalizationMode;
     bool mbDeactivateLocalizationMode;
+
+    // Current position
+    cv::Mat current_position_;
 };
 
 }// namespace ORB_SLAM
