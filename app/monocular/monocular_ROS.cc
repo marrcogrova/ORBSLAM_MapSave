@@ -19,16 +19,21 @@
 */
 
 
-#include<iostream>
-#include<opencv2/core/core.hpp>
-#include"System.h"
+#include <iostream>
+#include <opencv2/core/core.hpp>
+#include "System.h"
+
+#include "ros/ros.h"
+#include <sensor_msgs/Image.h>
+#include <sensor_msgs/image_encodings.h>
+#include <cv_bridge/cv_bridge.h>
 
 using namespace std;
 
 
 int main(int _argc , char **_argv)
 {
-    const string &strSettingPath = "/home/marrcogrova/programming/ORBSLAM_MapSave/Examples/Setting.yaml";
+    const string &strSettingPath = "/home/marrcogrova/programming/ORBSLAM_MapSave/app/monocular/Setting.yaml";
     cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
     if(!fSettings.isOpened())
     {
@@ -50,24 +55,30 @@ int main(int _argc , char **_argv)
     cout << endl << "-------" << endl;
     cout << "Start processing sequence ..." << endl;
 
-    // Main loop
-    cv::Mat im;
-    cv::VideoCapture capture(_argv[1]);
-while(1)
-    {
-        // Read image from file
-        capture >>im;
-        if(im.empty())
-        {
-            cerr << endl << "Failed to load image!" << endl;
-            return 1;
-        }
-        // Pass the image to the SLAM system
-        SLAM.TrackMonocular(im,0);
+    ros::init(_argc, _argv, "slam");
+    ros::NodeHandle nh;
+    ros::Subscriber sub;
 
-        if(SLAM.isShutdown() )
-            break;
-    }
+
+    sub = nh.subscribe<sensor_msgs::Image>(_argv[1], 1, [&](const sensor_msgs::Image::ConstPtr& _msg){
+        cv_bridge::CvImageConstPtr cv_ptr;
+        try {
+            cv_ptr = cv_bridge::toCvShare(_msg);
+        }
+            catch (cv_bridge::Exception& e) {
+            ROS_ERROR("cv_bridge exception: %s", e.what());
+            return;
+        }
+        
+        // Pass the image to the SLAM system
+        SLAM.TrackMonocular(cv_ptr->image,0);
+
+        if(SLAM.isShutdown())
+            return;
+    });
+    
+    ros::spin();
+
     // Stop all threads
     SLAM.Shutdown();
     // Save camera trajectory

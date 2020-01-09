@@ -36,14 +36,30 @@ find_package(Boost  1.54.0  	     # Minimum or EXACT version e.g. 1.36.0
   COMPONENTS serialization 				# Boost libraries by their canonical name
   )          
 
+find_package (catkin REQUIRED COMPONENTS
+	roscpp
+	std_msgs
+	cv_bridge
+	image_transport
+	tf
+	sensor_msgs
+	dynamic_reconfigure
+	message_generation
+   )
 
 #add_subdirectory(Thirdparty/DBoW2)
+
+catkin_package (
+  CATKIN_DEPENDS roscpp std_msgs cv_bridge image_transport tf sensor_msgs dynamic_reconfigure message_runtime
+)
+
 
 include_directories(
 ${PROJECT_SOURCE_DIR}
 ${PROJECT_SOURCE_DIR}/include
 ${EIGEN3_INCLUDE_DIR}
 ${Pangolin_INCLUDE_DIRS}
+${catkin_INCLUDE_DIRS}
 )
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
@@ -77,17 +93,22 @@ ${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/libDBoW2.so
 ${Pangolin_LIBRARIES}
 ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
 ${Boost_LIBRARIES}
+${catkin_LIBRARIES}
 )
 
 # Build examples
 
 
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Monocular)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/app/monocular)
 
-add_executable(Monocular
-Examples/Monocular.cc)
-target_link_libraries(Monocular ${PROJECT_NAME})
+add_executable(monocular
+app/monocular/monocular.cc)
+target_link_libraries(monocular ${PROJECT_NAME})
+
+add_executable(monocular_ROS
+app/monocular/monocular_ROS.cc)
+target_link_libraries(monocular_ROS ${PROJECT_NAME})
 
 # Build tools
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/tools)

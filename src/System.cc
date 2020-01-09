@@ -319,7 +319,7 @@ void System::Reset()
 
 void System::SaveMapRequest()
 {
-    SaveMap("/home/marrcogrova/programming/ORBSLAM_MapSave/Examples/Slam_latest_Map.bin");
+    SaveMap("/home/marrcogrova/programming/ORBSLAM_MapSave/app/monocular/Slam_latest_Map.bin");
 }
 
 void System::ShutdownRequest()
