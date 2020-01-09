@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 project(ORB_SLAM2)
 
 IF(NOT CMAKE_BUILD_TYPE)
@@ -36,18 +36,16 @@ find_package(Boost  1.54.0  	     # Minimum or EXACT version e.g. 1.36.0
   COMPONENTS serialization 				# Boost libraries by their canonical name
   )          
 
-find_package (catkin REQUIRED COMPONENTS
-	roscpp
-	std_msgs
-	cv_bridge
-	image_transport
-	tf
-	sensor_msgs
-	dynamic_reconfigure
-	message_generation
+   find_package (catkin REQUIRED COMPONENTS
+      roscpp
+      std_msgs
+      cv_bridge
+      image_transport
+      tf
+      sensor_msgs
+      dynamic_reconfigure
+      message_generation
    )
-
-#add_subdirectory(Thirdparty/DBoW2)
 
 catkin_package (
   CATKIN_DEPENDS roscpp std_msgs cv_bridge image_transport tf sensor_msgs dynamic_reconfigure message_runtime
@@ -87,28 +85,16 @@ src/Viewer.cc
 )
 
 target_link_libraries(${PROJECT_NAME}
-${OpenCV_LIBS}
-${EIGEN3_LIBS}
-${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/libDBoW2.so
-${Pangolin_LIBRARIES}
-${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
-${Boost_LIBRARIES}
-${catkin_LIBRARIES}
+   ${OpenCV_LIBS}
+   ${EIGEN3_LIBS}
+   ${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/libDBoW2.so
+   ${Pangolin_LIBRARIES}
+   ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
+   ${Boost_LIBRARIES}
+   ${catkin_LIBRARIES}
 )
 
-# Build examples
-
-
-
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/app/monocular)
-
-add_executable(monocular
-app/monocular/monocular.cc)
-target_link_libraries(monocular ${PROJECT_NAME})
-
-add_executable(monocular_ROS
-app/monocular/monocular_ROS.cc)
-target_link_libraries(monocular_ROS ${PROJECT_NAME})
+add_subdirectory(app/monocular)
 
 # Build tools
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/tools)
