@@ -86,8 +86,8 @@ void MonocularROS::publishMessage(ros::Publisher _pub , topicType _msg){
 
 void MonocularROS::publishROS(){
 
-    ORB_SLAM2::Tracking::eTrackingState state = SLAM_->GetSLAMState();
-    if (state == ORB_SLAM2::Tracking::eTrackingState::OK){
+    ORB_SLAM2::Tracking::eTrackingState state = static_cast<ORB_SLAM2::Tracking::eTrackingState>(SLAM_->GetTrackingState());
+    if (state == ORB_SLAM2::Tracking::OK){
 
         cv::Mat position = SLAM_->GetCurrentPosition();
         if (!position.empty()) {

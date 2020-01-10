@@ -79,7 +79,7 @@ public:
 public:
 
     // Tracking states
-    enum eTrackingState{
+    enum eTrackingState : int {
         SYSTEM_NOT_READY=-1,
         NO_IMAGES_YET=0,
         NOT_INITIALIZED=1,

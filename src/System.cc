@@ -536,7 +536,7 @@ cv::Mat System::GetCurrentPosition () {
   return current_position_;
 }
 
-Tracking::eTrackingState System::GetSLAMState(){
+int System::GetTrackingState(){
     return mpTracker->mLastProcessedState;
 }
 

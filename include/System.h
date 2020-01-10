@@ -130,7 +130,7 @@ public:
     cv::Mat GetCurrentPosition();
     cv::Mat DrawCurrentFrame();
 
-    Tracking::eTrackingState GetSLAMState();
+    int GetTrackingState();
 
 private:
 
