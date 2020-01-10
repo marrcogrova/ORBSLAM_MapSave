@@ -18,21 +18,8 @@
 * along with ORB-SLAM2. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-
 #include <iostream>
-#include <opencv2/core/core.hpp>
-#include "System.h"
-
-#include "ros/ros.h"
-#include <sensor_msgs/Image.h>
-#include <sensor_msgs/image_encodings.h>
-#include <cv_bridge/cv_bridge.h>
-
 #include "MonocularROS.h"
-
-using namespace std;
-
 
 int main(int _argc , char **_argv)
 {

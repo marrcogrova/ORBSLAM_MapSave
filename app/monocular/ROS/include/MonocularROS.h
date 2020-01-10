@@ -26,9 +26,13 @@
 #include "ros/ros.h"
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/image_encodings.h>
+#include <sensor_msgs/PointCloud2.h>
 #include <cv_bridge/cv_bridge.h>
 
-using namespace std;
+#include <tf/transform_broadcaster.h>
+#include <geometry_msgs/PoseStamped.h>
+
+#include <nav_msgs/Path.h>
 
 class MonocularROS{
 
@@ -39,8 +43,17 @@ class MonocularROS{
 
         void shutdown();
 
+        void publishROS();
+        void publishImageROS(cv::Mat _image);
+        void PublishPositionAsTransform(cv::Mat _transformation);
+        void PublishPositionAsPoseStamped(cv::Mat _transformation);
+
+        tf::Transform TransformFromMat (cv::Mat _transformation);
+        sensor_msgs::PointCloud2 MapPointsToPointCloud(std::vector<ORB_SLAM2::MapPoint*> _mapPoints);
+
     private:
         ORB_SLAM2::System *SLAM_;
+        int minObservationsPerPoint_ = 2;
 
         ros::NodeHandle nh_;
 
