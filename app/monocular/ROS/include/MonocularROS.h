@@ -43,17 +43,19 @@ class MonocularROS{
 
         void shutdown();
 
-        void publishROS();
-        void publishImageROS(cv::Mat _image);
-        void PublishPositionAsTransform(cv::Mat _transformation);
-        void PublishPositionAsPoseStamped(cv::Mat _transformation);
+    private:
+        template <typename topicType>
+        void publishMessage(ros::Publisher _pub , topicType _msg);
 
+        void publishROS();
+        
         tf::Transform TransformFromMat (cv::Mat _transformation);
         sensor_msgs::PointCloud2 MapPointsToPointCloud(std::vector<ORB_SLAM2::MapPoint*> _mapPoints);
 
     private:
         ORB_SLAM2::System *SLAM_;
         int minObservationsPerPoint_ = 2;
+        nav_msgs::Path VOpath_;
 
         ros::NodeHandle nh_;
 
@@ -62,4 +64,5 @@ class MonocularROS{
         ros::Publisher imgPub_;
         ros::Publisher posePub_;
         ros::Publisher mapPub_;
+        ros::Publisher pathVOPub_;
 };

@@ -52,7 +52,6 @@ class Map;
 class Tracking;
 class LocalMapping;
 class LoopClosing;
-
 class System
 {
 public:
@@ -128,8 +127,10 @@ public:
     void SaveTrajectoryKITTI(const string &filename);
 
     std::vector<MapPoint*> GetAllMapPoints();
-    cv::Mat GetCurrentPosition ();
-    cv::Mat DrawCurrentFrame ();
+    cv::Mat GetCurrentPosition();
+    cv::Mat DrawCurrentFrame();
+
+    Tracking::eTrackingState GetSLAMState();
 
 private:
 

@@ -47,10 +47,11 @@ bool MonocularROS::init(const std::string _configPath){
     cout << endl << "-------" << endl;
     cout << "Start processing sequence ..." << endl;
 
- 
+
     mapPub_    = nh_.advertise<sensor_msgs::PointCloud2>("/inspector/map", 1);
     imgPub_    = nh_.advertise<sensor_msgs::Image> ("inspector/debug_image", 1);
     posePub_   = nh_.advertise<geometry_msgs::PoseStamped> ("inspector/pose", 1);
+    pathVOPub_ = nh_.advertise<nav_msgs::Path> ("inspector/path", 1);
 
     const string imageTopic = fSettings["image_topic"];
     imgSub_ = nh_.subscribe<sensor_msgs::Image>(imageTopic, 1, [&](const sensor_msgs::Image::ConstPtr& _msg){
@@ -75,41 +76,41 @@ bool MonocularROS::init(const std::string _configPath){
     return true;
 }
 
-
-void MonocularROS::publishImageROS(cv::Mat _image){
-  std_msgs::Header header;
-  header.stamp = ros::Time::now();
-  header.frame_id = "map";
-  const sensor_msgs::ImagePtr image_msg = cv_bridge::CvImage(header, "bgr8", _image).toImageMsg();
-  imgPub_.publish(image_msg);
-}
-
-void MonocularROS::PublishPositionAsTransform (cv::Mat _transformation) {
-  tf::Transform transform = TransformFromMat (_transformation);
-  static tf::TransformBroadcaster tf_broadcaster;
-  tf_broadcaster.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "map", "camera_link"));
-}
-
-void MonocularROS::PublishPositionAsPoseStamped (cv::Mat _transformation) {
-  tf::Transform grasp_tf = TransformFromMat (_transformation);
-  tf::Stamped<tf::Pose> grasp_tf_pose(grasp_tf, ros::Time::now(), "map");
-  geometry_msgs::PoseStamped pose_msg;
-  tf::poseStampedTFToMsg (grasp_tf_pose, pose_msg);
-  posePub_.publish(pose_msg);
+template <typename topicType>
+void MonocularROS::publishMessage(ros::Publisher _pub , topicType _msg){
+  _msg.header.frame_id = "map"; 
+  _msg.header.stamp=ros::Time::now();
+  _pub.publish(_msg);
+  return;
 }
 
 void MonocularROS::publishROS(){
 
-    cv::Mat position = SLAM_->GetCurrentPosition();
-    if (!position.empty()) {
-        PublishPositionAsTransform(position);
-        PublishPositionAsPoseStamped(position);
+    ORB_SLAM2::Tracking::eTrackingState state = SLAM_->GetSLAMState();
+    if (state == ORB_SLAM2::Tracking::eTrackingState::OK){
+
+        cv::Mat position = SLAM_->GetCurrentPosition();
+        if (!position.empty()) {
+
+            tf::Transform grasp_tf = TransformFromMat (position);
+            tf::Stamped<tf::Pose> grasp_tf_pose(grasp_tf, ros::Time::now(), "map");
+            geometry_msgs::PoseStamped pose_msg;
+            tf::poseStampedTFToMsg (grasp_tf_pose, pose_msg);
+            posePub_.publish(pose_msg);
+
+            VOpath_.poses.push_back(pose_msg);
+            publishMessage<nav_msgs::Path>(pathVOPub_,VOpath_);
+        }
     }
 
-    publishImageROS(SLAM_->DrawCurrentFrame());
+    cv::Mat image = SLAM_->DrawCurrentFrame();
+    const sensor_msgs::ImagePtr image_msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", image).toImageMsg();
+    image_msg->header.frame_id = "camera_link";
+    image_msg->header.stamp=ros::Time::now();
+    imgPub_.publish(image_msg);
 
     sensor_msgs::PointCloud2 cloud = MapPointsToPointCloud (SLAM_->GetAllMapPoints());
-    mapPub_.publish(cloud);
+    publishMessage<sensor_msgs::PointCloud2>(mapPub_,cloud);
 }
 
 
@@ -122,8 +123,6 @@ sensor_msgs::PointCloud2 MonocularROS::MapPointsToPointCloud (std::vector<ORB_SL
 
   const int numChannels = 3; // x y z
 
-  cloud.header.stamp = ros::Time::now();
-  cloud.header.frame_id = "map";
   cloud.height = 1;
   cloud.width = _mapPoints.size();
   cloud.is_bigendian = false;

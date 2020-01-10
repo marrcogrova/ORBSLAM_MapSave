@@ -536,4 +536,8 @@ cv::Mat System::GetCurrentPosition () {
   return current_position_;
 }
 
+Tracking::eTrackingState System::GetSLAMState(){
+    return mpTracker->mLastProcessedState;
+}
+
 } //namespace ORB_SLAM
